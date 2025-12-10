@@ -2,13 +2,13 @@ import React, { useState, createContext, useContext } from "react";
 
 export const AnalysisEditorContext = createContext(null);
 
-// ------------------------------------------------------------------
-// Provider (top-level)
-// ------------------------------------------------------------------
+// ------------------------------------------------------------
+// Provider
+// ------------------------------------------------------------
 export function AnalysisEditorProvider({ children }) {
   const [blocks, setBlocks] = useState([]);
   const [acceptedIds, setAcceptedIds] = useState(new Set());
-  const [view, setView] = useState('landing');
+  const [view, setView] = useState("landing");
 
   function pushBlocks(newBlocks) {
     setBlocks(prev => {
@@ -60,13 +60,11 @@ export function AnalysisEditorProvider({ children }) {
   );
 }
 
-// ------------------------------------------------------------------
-// SAFE HOOK (this must be OUTSIDE the provider)
-// ------------------------------------------------------------------
+// ------------------------------------------------------------
+// Hook
+// ------------------------------------------------------------
 export function useAnalysisEditor() {
   const ctx = useContext(AnalysisEditorContext);
-
-  // fallback instead of error
   if (!ctx) {
     return {
       blocks: [],
@@ -80,6 +78,23 @@ export function useAnalysisEditor() {
       setView: () => {}
     };
   }
-
   return ctx;
+}
+
+// ------------------------------------------------------------
+// ROOT APP COMPONENT (THIS IS WHAT main.jsx WILL RENDER)
+// ------------------------------------------------------------
+export default function AppWrapped() {
+  const { view } = useAnalysisEditor();
+
+  return (
+    <AnalysisEditorProvider>
+      <div style={{ padding: "40px", fontFamily: "sans-serif" }}>
+        <h1>Design Narrator</h1>
+        <p>Your app is now rendering successfully 🎉</p>
+
+        <p>Current view: <b>{view}</b></p>
+      </div>
+    </AnalysisEditorProvider>
+  );
 }
