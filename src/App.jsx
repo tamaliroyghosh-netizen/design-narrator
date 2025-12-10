@@ -3,16 +3,26 @@ import React, { useState, createContext, useContext } from "react";
 export const AnalysisEditorContext = createContext(null);
 
 export function AnalysisEditorProvider({ children }) {
-  const [blocks, setBlocks] = useState([]);
-  const [view, setView] = useState('landing');
+  export function useAnalysisEditor() {
+  const ctx = useContext(AnalysisEditorContext);
 
-  function pushBlocks(newBlocks) {
-    setBlocks((prev) => {
-      const map = new Map(prev.map((b) => [b.id, b]));
-      newBlocks.forEach((b) => map.set(b.id, b));
-      return Array.from(map.values());
-    });
+  // If the provider is missing, return a harmless fallback instead of crashing
+  if (!ctx) {
+    return {
+      blocks: [],
+      pushBlocks: () => {},
+      updateBlock: () => {},
+      acceptBlock: () => {},
+      removeBlock: () => {},
+      clearAll: () => {},
+      acceptedIds: new Set(),
+      view: 'landing',
+      setView: () => {}
+    };
   }
+
+  return ctx;
+}
 
   function updateBlock(id, patch) {
     setBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, ...patch } : b)));
